@@ -1,0 +1,52 @@
+{
+    "Name": "ПЕШИЙ+коньки 'Травкино' ПЛАН on AllTrails",
+    "Description" : "Test file",
+    "Track": {
+        "distance" : 100,
+        "segments": [{
+            "distance" : 100,
+            "points": [{
+                    "lat": 61.11324030,
+                    "lon": 29.87487670
+                },
+
+                {
+                    "lat": 61.11324000,
+                    "lon": 29.87486000
+                },
+
+                {
+                    "lat": 61.11330000,
+                    "lon": 29.87490000
+                },
+
+                {
+                    "lat": 61.11337000,
+                    "lon": 29.87500000
+                },
+
+                {
+                    "lat": 61.11361000,
+                    "lon": 29.87518000
+                }
+            ]
+        }]
+    },
+    "Waypoints" : [
+        {
+            "name" : "Name1",
+            "description" : "First waypoints",
+            "lat" : 61.11324000,
+            "lon" :29.87486000
+        },
+        {
+            "name" : "Name2",
+            "description" : "Second waypoints",
+            "lat" : 61.11324000,
+            "lon" :29.87486000
+        }
+    ],
+    "Route" : {
+        "Name": "Route"
+    }
+}

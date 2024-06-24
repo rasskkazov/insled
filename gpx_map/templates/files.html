@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+
+<script>
+    function sePath(dataUrl) {
+        return `tracks/${dataUrl.split("/")[2].split(".gpx")}`
+    }
+</script>
+
+<style>
+    body {
+        height: 100%;
+        margin: 0;
+
+        /* fallback for old browsers */
+        background: #667eea;
+
+        /* Chrome 10-25, Safari 5.1-6 */
+        background: -webkit-linear-gradient(to right, rgba(102, 126, 234, 0.5), rgba(118, 75, 162, 0.5));
+
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background: linear-gradient(to right, rgba(102, 126, 234, 0.5), rgba(118, 75, 162, 0.5))
+    }
+</style>
+
+<div class='files-container container bg-grad-green'>
+    <div class="row p-2">
+        <div class="col text-center p-2">
+            <h2>База маршрутов</h2>
+        </div>
+    </div>
+    {% for file in files %}
+    <div class="row p-2">
+        <div class=" col shadow p-3 mb-2 bg-white rounded" style="width: 36rem;">
+            <div class="card-body">
+                <h5 class="card-title">{{file.name}}</h5>
+                <p class="card-text text-secondary">{{file.author}}</p>
+                <a href=/tracks/{{file.id}} class="btn btn-primary btn-sm">
+                    Просмотр
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}
