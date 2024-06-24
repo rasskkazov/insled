@@ -79,6 +79,8 @@ WSGI_APPLICATION = 'gpx_editor.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'insled_django',
+        'PASSWORD': 'bogdan',
         'OPTIONS': {
             'read_default_file': '/etc/mysql/my.cnf',
             
