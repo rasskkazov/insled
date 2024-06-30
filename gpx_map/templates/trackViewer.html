@@ -1,178 +1,186 @@
-{% extends "base.html" %}
-
-{% block page_content %}
-
+{% extends "base.html" %} {% block page_content %}
+<!-- отрисовка маршрутов, загруженных из БД -->
 <style>
-    .j-leaflet-draw-tooltip {
-        visibility: visible;
-    }
+  .j-leaflet-draw-tooltip {
+    visibility: visible;
+  }
 
-    .popupCustom {
-        background: rgba(0, 0, 0, 0.5);
-        background-color: rgba(0, 0, 0, 0.5);
-    }
+  .popupCustom {
+    background: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 
-    .leaflet-tooltip.popupCustom::before {
-        border-left: 15px solid transparent;
-        border-right: 15px solid transparent;
-    }
+  .leaflet-tooltip.popupCustom::before {
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+  }
 
-    .leaflet-tooltip-right.myCSSClass::before {
-        border-left: 15px solid transparent;
-        border-right: 15px solid transparent;
-    }
+  .leaflet-tooltip-right.myCSSClass::before {
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+  }
 
-    div.gfg {
-        height: 110px;
-        overflow: auto;
-        text-align: justify;
-    }
+  div.gfg {
+    height: 110px;
+    overflow: auto;
+    text-align: justify;
+  }
 </style>
 
-
 <script>
-    $(document).ready(function () {
-        loadTrack()
+  $(document).ready(function () {
+    loadTrack();
+  });
+
+  function loadTrack() {
+    var routingControl = L.Routing.control({
+      waypoints: [],
+      createMarker: function () {
+        return null;
+      },
+      routeWhileDragging: true,
+      addWaypoints: false,
+      show: false,
+    }).addTo(map);
+    var markersFromFile = [];
+
+    var input = "{{ data|escapejs }}";
+    var trackName = "{{trackName|escapejs}}";
+    var distance = 0;
+
+    var out = JSON.stringify(
+      toGeoJSON["gpx"](new DOMParser().parseFromString(input, "text/xml")),
+      null,
+      4
+    );
+
+    out = JSON.parse(out);
+
+    drawnItems.clearLayers();
+    L.geoJson(out, {
+      style: function (feature) {
+        return {
+          color: "#d12a00",
+          weight: 5,
+          opacity: 0.6,
+        };
+      },
+      onEachFeature: function (feature, layer) {
+        // make separate function for this
+        drawnItems.addLayer(layer);
+        var name = `<div class='p-1'><b>${feature.properties.name}</b></div>`;
+        var desc = feature.properties.desc;
+        if (desc) {
+          desc = `<div class="gfg p-1"<p>${desc}</p></div>`;
+        } else {
+          desc = "";
+        }
+        if (!name) name = " ";
+        layer.bindPopup(name + desc);
+
+        layer.addEventListener("dblclick", function (e) {
+          var popup = layer.getPopup();
+          var content = popup._content
+            .replace("</p>", "")
+            .replace("<b>", "")
+            .replace("</b>", "")
+            .replace("<br>", "")
+            .replace("</br>", "")
+            .replace("</p>", "")
+            .split("<p>");
+          var name = content[1];
+          var desc = content[2];
+
+          if (!name) name = "";
+          if (!desc) desc = "";
+
+          console.log(popup);
+          $("#editpopup").modal();
+          document.getElementById("edit-popup-modal-input-name").value = name;
+          document.getElementById("edit-popup-modal-input-desc").value = desc;
+          currentPopup = layer;
+        });
+
+        if (layer.feature.geometry.type === "Point") {
+          markersFromFile.push(layer.getLatLng());
+          routingControl.setWaypoints(markersFromFile);
+        }
+
+        if (layer.feature.geometry.type === "LineString") {
+          var lat = 0;
+          var lng = 0;
+
+          distance = getDistance(layer);
+
+          var cm = L.circleMarker([0, 0], {
+            color: "#3388ff",
+            fillOpacity: 1,
+            radius: 5,
+          });
+
+          var popup = L.tooltip();
+
+          var customOptions = {
+            direction: "right",
+            maxWidth: "400",
+            width: "200",
+            className:
+              "leaflet-draw-tooltip leaflet-draw-tooltip-single j-leaflet-draw-tooltip",
+          };
+          cm.bindTooltip(popup, customOptions);
+
+          layer.on("mouseover", function (e) {
+            lat = e.latlng.lat;
+            lng = e.latlng.lng;
+
+            var trackLength = getDistanceToPoint(layer, {
+              lat: lat,
+              lng: lng,
+            });
+
+            cm.setLatLng([lat, lng]);
+
+            popup.setContent(`<p>${trackLength} км</p>`);
+            popup.setLatLng([lat, lng]);
+
+            cm.addTo(map);
+            popup.openPopup();
+          });
+        }
+      },
+    }).addTo(map);
+
+    info.update({
+      name: trackName,
+      length: distance,
     });
 
-    function loadTrack() {
+    // make separate function for this
+    var len = drawnItems.getLayers()[0].feature.geometry.coordinates.length;
 
-        var input = '{{ data|escapejs }}'
-        var trackName = '{{trackName|escapejs}}'
-        var distance = 0
-
-        var out = JSON.stringify(
-            toGeoJSON["gpx"](
-                new DOMParser().parseFromString(input, "text/xml")
-            ),
-            null,
-            4
-        );
-
-        out = JSON.parse(out);
-
-        drawnItems.clearLayers();
-        L.geoJson(out, {
-            style: function (feature) {
-                return {
-                    color: "#d12a00",
-                    weight: 5,
-                    opacity: 0.6,
-                };
-            },
-            onEachFeature: function (feature, layer) {
-                // make separate function for this  
-                drawnItems.addLayer(layer);
-                var name =
-                    `<div class='p-1'><b>${feature.properties.name}</b></div>`;
-                var desc = feature.properties.desc
-                if (desc) {
-                    desc = `<div class="gfg p-1"<p>${desc}</p></div>`;
-                } else {
-                    desc = '';
-                }
-                if (!name) name = " ";
-                layer.bindPopup(name + desc);
-
-                layer.addEventListener('dblclick', function (e) {
-                    var popup = layer.getPopup()
-                    var content = popup._content
-                        .replace('</p>', '')
-                        .replace('<b>', '')
-                        .replace('</b>', '')
-                        .replace('<br>', '')
-                        .replace('</br>', '')
-                        .replace('</p>', '')
-                        .split('<p>')
-                    var name = content[1]
-                    var desc = content[2]
-
-                    if (!name) name = ''
-                    if (!desc) desc = ''
-
-                    console.log(popup)
-                    $("#editpopup").modal()
-                    document.getElementById('edit-popup-modal-input-name').value =
-                        name
-                    document.getElementById('edit-popup-modal-input-desc').value =
-                        desc
-                    currentPopup = layer
-                });
-
-                if (layer.feature.geometry.type === 'LineString') {
-
-                    var lat = 0
-                    var lng = 0
-
-                    distance = getDistance(layer)
-
-                    var cm = L.circleMarker([0, 0], {
-                        color: '#3388ff',
-                        fillOpacity: 1,
-                        radius: 5
-                    })
-
-                    var popup = L.tooltip()
-
-                    var customOptions = {
-                        direction: 'right',
-                        'maxWidth': '400',
-                        'width': '200',
-                        'className': 'leaflet-draw-tooltip leaflet-draw-tooltip-single j-leaflet-draw-tooltip'
-                    }
-                    cm.bindTooltip(popup, customOptions)
-
-                    layer.on('mouseover', function (e) {
-
-                        lat = e.latlng.lat
-                        lng = e.latlng.lng
-
-                        var trackLength = getDistanceToPoint(layer, {
-                            'lat': lat,
-                            'lng': lng
-                        })
-
-                        cm.setLatLng([lat, lng])
-
-
-                        popup.setContent(`<p>${trackLength} км</p>`)
-                        popup.setLatLng([lat, lng])
-
-                        cm.addTo(map)
-                        popup.openPopup()
-                    })
-                }
-            },
-
-
-        }).addTo(map);
-
-        info.update({
-            name: trackName,
-            length: distance
-        })
-
-        // make separate function for this
-        var len = drawnItems.getLayers()[0].feature.geometry.coordinates.length
-
-        var lat1 = drawnItems.getLayers()[0].feature.geometry.coordinates[0][0];
-        var lon1 = drawnItems.getLayers()[0].feature.geometry.coordinates[0][1];
-        var lat2 = drawnItems.getLayers()[0].feature.geometry.coordinates[len - 1][0];
-        var lon2 = drawnItems.getLayers()[0].feature.geometry.coordinates[len - 1][1];
-        var zoom = 12
-        var latC = (lat1 + lat2) / 2
-        var lonC = (lon1 + lon2) / 2
-        map.flyTo([lonC, latC], zoom)
-    }
+    var lat1 = drawnItems.getLayers()[0].feature.geometry.coordinates[0][0];
+    var lon1 = drawnItems.getLayers()[0].feature.geometry.coordinates[0][1];
+    var lat2 =
+      drawnItems.getLayers()[0].feature.geometry.coordinates[len - 1][0];
+    var lon2 =
+      drawnItems.getLayers()[0].feature.geometry.coordinates[len - 1][1];
+    var zoom = 12;
+    var latC = (lat1 + lat2) / 2;
+    var lonC = (lon1 + lon2) / 2;
+    map.flyTo([lonC, latC], zoom);
+  }
 </script>
 
 <div id="content-container" class="container-fluid p-0">
-    <div id="map-container" class="container-fluid h-100 px-0">
-        <div class='map' id="map" style="height: 100%;"></div>
-    </div>
+  <div id="map-container" class="container-fluid h-100 px-0">
+    <div class="map" id="map" style="height: 100%"></div>
+  </div>
 </div>
 
 {% load static %}
-<script type="text/JavaScript" src="{% static 'gpx_map/js/trackViewer.js' %}?version=1"></script>
+<script
+  type="text/JavaScript"
+  src="{% static 'gpx_map/js/trackViewer.js' %}?version=1"
+></script>
 
 {% endblock %}
