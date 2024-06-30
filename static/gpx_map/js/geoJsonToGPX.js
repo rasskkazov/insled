@@ -82,10 +82,16 @@ function GeoJsonToGpx(geoJson, options, implementation) {
 
   function interpretFeature(feature) {
     var geometry = feature.geometry;
-    const properties = geometry.properties;
-    const coordinates = geometry.geometry.coordinates;
+    if (geometry.hasOwnProperty("geometry")) {
+      geometry = geometry.geometry;
+    }
 
-    var type = geometry.geometry.type;
+    console.log(geometry);
+
+    const properties = geometry.properties;
+    const coordinates = geometry.coordinates;
+    var type = geometry.type;
+
     switch (type) {
       case "Polygon":
         break;

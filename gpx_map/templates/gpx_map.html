@@ -193,11 +193,11 @@
 
                 trackName = layer.feature.properties.name;
 
-                let dispName =
-                  trackName.length > 25 ? `${trackName.slice(0, 25)}...` : name;
+                // let dispName =
+                //   trackName.length > 25 ? `${trackName.slice(0, 25)}...` : name;
 
                 info.update({
-                  name: dispName,
+                  name: "dispName",
                   length: getDistance(layer),
                 });
 
@@ -262,12 +262,12 @@
         };
       }
 
-      info.ddEventListener("dblclick", function (e) {
-        console.log("opening the modal to edit info");
-        $("#editinfo").modal();
-        document.getElementById("edit-popup-modal-input-name").value =
-          trackName;
-      });
+      // info.addEventListener("dblclick", function (e) {
+      //   console.log("opening the modal to edit info");
+      //   $("#editinfo").modal();
+      //   document.getElementById("edit-popup-modal-input-name").value =
+      //     trackName;
+      // });
 
       $(document).ready(function () {
         $(".dropdown-menu").mouseleave(function () {
@@ -286,11 +286,6 @@
     }
 
     function handlePopupEditsSave() {
-      // var name = document.getElementById("edit-popup-modal-input-name").value;
-      // var desc = document.getElementById("edit-popup-modal-input-desc").value;
-      // currentPopup.bindPopup(
-      //   `<p><b>${name}</b></p><div class='gfg'<p>${desc}</p></div>`
-      // );
       var name = document.getElementById("edit-popup-modal-input-name").value;
       var desc = document.getElementById("edit-popup-modal-input-desc").value;
 
