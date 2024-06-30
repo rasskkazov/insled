@@ -82,13 +82,12 @@ function GeoJsonToGpx(geoJson, options, implementation) {
 
   function interpretFeature(feature) {
     var geometry = feature.geometry;
+
+    const properties = geometry.properties;
     if (geometry.hasOwnProperty("geometry")) {
       geometry = geometry.geometry;
     }
 
-    console.log(geometry);
-
-    const properties = geometry.properties;
     const coordinates = geometry.coordinates;
     var type = geometry.type;
 
