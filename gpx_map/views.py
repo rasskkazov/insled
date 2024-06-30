@@ -91,7 +91,9 @@ def files(request):
 def trackView(request, fileid):
 
     fileObj = DataFile.objects.get(pk=fileid)
-    filePath = 'media/' + str(fileObj.gpx)
+    filePath = '/home/bogdan/gasu/source/gpx_map/media/' + str(fileObj.gpx)
+    print("path is ", filePath)
+    print("my path is ", "/home/bogdan/gasu/source/gpx_map/media/data/gpx/track/2022/ВЕЛО Лосево - пл.79 км ПЛАН (26.10.19) (1).gpx")
     fileInstance = open(filePath)
     trackName = fileObj.name
     data = fileInstance.read()

@@ -1,52 +1,89 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-    <a class="navbar-brand" href="#">Редактор gps-треков</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+  <a class="navbar-brand" href="#">Редактор gps-треков</a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Главная <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">К приложению</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle dropdownHandler" href="#" id="navbarDropdown" role="button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Файл
-                </a>
-                <div id='file-dropdown' class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <form id="load-file" method="post" enctype="multipart/form-data">
-                        <label class="dropdown-item">
-                            <input type="file" style="display: none;" id="fileinput" name="document"
-                                onchange="handleFileSelect()">
-                            Загрузить из gpx файла
-                        </label>
-                    </form>
-                    <!-- <label class="dropdown-item">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#"
+          >Главная <span class="sr-only">(current)</span></a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"
+          >К приложению</a
+        >
+      </li>
+      <li class="nav-item dropdown">
+        <a
+          class="nav-link dropdown-toggle dropdownHandler"
+          href="#"
+          id="navbarDropdown"
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Файл
+        </a>
+        <div
+          id="file-dropdown"
+          class="dropdown-menu"
+          aria-labelledby="navbarDropdown"
+        >
+          <form id="load-file" method="post" enctype="multipart/form-data">
+            <label class="dropdown-item">
+              <input
+                type="file"
+                style="display: none"
+                id="fileinput"
+                name="document"
+                onchange="handleFileSelect()"
+              />
+              Загрузить из gpx файла
+            </label>
+          </form>
+          <!-- <label class="dropdown-item">
                         <a href="#" style="display: none;"></a>
                         Создать новый трек
                     </label> -->
-                    <label class="dropdown-item" data-toggle="modal" data-target="#uploadFileModal">
-                        Загрузить файл
-                    </label>
-                    <a href="#" class="dropdown-item" id='export' style="margin-bottom: 8px;">Сохранить</a>
+          <label
+            class="dropdown-item"
+            data-toggle="modal"
+            data-target="#uploadFileModal"
+          >
+            Загрузить файл
+          </label>
+          <a
+            href="#"
+            class="dropdown-item"
+            id="export"
+            style="margin-bottom: 8px"
+            >Сохранить</a
+          >
 
-                    <!-- <a href="#" class="dropdown-item" id='saveAndUpload' style="margin-bottom: 8px;">Сохранить и загрузить на сервер</a> -->
-                    <!-- <label class="dropdown-item">
-                        <a href="#" id="saveAndUpload" style="display: none;"></a>
-                        Сохранить и загрузить на сервер
-                    </label> -->
-                </div>
-            </li>
-
-        </ul>
-        <!-- <form class="form-inline my-2 my-lg-0 ">
+          <a
+            href="http://127.0.0.1:8000/files/"
+            class="dropdown-item"
+            style="margin-bottom: 8px"
+            >Загрузить маршруты из базы</a
+          >
+        </div>
+      </li>
+    </ul>
+    <!-- <form class="form-inline my-2 my-lg-0 ">
             <input class="form-control mr-sm-2" type="search" placeholder="Найти на карте..." aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Найти</button>
         </form> -->
-    </div>
+  </div>
 </nav>
