@@ -79,33 +79,36 @@ function GeoJsonToGpx(geoJson, options, implementation) {
     });
     return el;
   }
+
   function interpretFeature(feature) {
-    var geometry = feature.geometry,
-      properties = feature.properties;
-    var type = geometry.type;
+    var geometry = feature.geometry;
+    const properties = geometry.properties;
+    const coordinates = geometry.geometry.coordinates;
+
+    var type = geometry.geometry.type;
     switch (type) {
       case "Polygon":
         break;
       case "Point": {
-        wpts.push(createPt("wpt", geometry.coordinates, properties));
+        wpts.push(createPt("wpt", coordinates, properties));
         break;
       }
       case "MultiPoint": {
-        geometry.coordinates.forEach(function (coord) {
+        coordinates.forEach(function (coord) {
           wpts.push(createPt("wpt", coord, properties));
         });
         break;
       }
       case "LineString": {
         var lineTrk = createTrk(properties);
-        var trkseg = createTrkSeg(geometry.coordinates);
+        var trkseg = createTrkSeg(coordinates);
         lineTrk.appendChild(trkseg);
         trks.push(lineTrk);
         break;
       }
       case "MultiLineString": {
         var trk_1 = createTrk(properties);
-        geometry.coordinates.forEach(function (pos) {
+        coordinates.forEach(function (pos) {
           var trkseg = createTrkSeg(pos);
           trk_1.appendChild(trkseg);
         });
@@ -146,7 +149,9 @@ function GeoJsonToGpx(geoJson, options, implementation) {
     createTagInParentElement(metadata, "keywords", meta.keywords);
     gpx.appendChild(metadata);
   }
+
   var type = geoJson.type;
+
   switch (type) {
     case "Feature": {
       interpretFeature(geoJson);
@@ -162,6 +167,7 @@ function GeoJsonToGpx(geoJson, options, implementation) {
     default:
       break;
   }
+
   wpts.forEach(function (wpt) {
     return gpx.appendChild(wpt);
   });

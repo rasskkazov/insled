@@ -169,9 +169,6 @@ function getCookie(name) {
 
 document.getElementById("export").onclick = function (e) {
   var data = drawnItems.toGeoJSON();
-  console.log(
-    "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data))
-  );
 
   var gpxData = GeoJsonToGpx(data);
 
