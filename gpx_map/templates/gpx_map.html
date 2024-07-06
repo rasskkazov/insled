@@ -37,17 +37,6 @@
     var trackName = "";
 
     function handleFileSelect() {
-      var routingControl = L.Routing.control({
-        waypoints: [],
-        createMarker: function () {
-          return null;
-        },
-        routeWhileDragging: true,
-        addWaypoints: false,
-        show: false,
-      }).addTo(map);
-      var markersFromFile = [];
-
       if (
         !window.File ||
         !window.FileReader ||
@@ -183,8 +172,10 @@
               // ЗДЕСЬ МОЦ КОД
 
               if (layer.feature.geometry.type === "Point") {
-                markersFromFile.push(layer.getLatLng());
-                routingControl.setWaypoints(markersFromFile);
+                layer.options.autoId = autoRouteIdCounter++;
+
+                markers.set(layer.options.autoId, layer.getLatLng());
+                routingControl.setWaypoints([...markers.values()]);
               }
 
               if (layer.feature.geometry.type === "LineString") {

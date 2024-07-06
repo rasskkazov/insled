@@ -99,6 +99,7 @@ def trackView(request, fileid):
     data = fileInstance.read()
 
     return render (request, 'trackViewer.html', {'data': data, 'trackName': trackName})
+    # return render (request, 'gpx_map.html', {'data': data, 'trackName': trackName})
 
 
 
