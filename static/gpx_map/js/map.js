@@ -61,7 +61,6 @@ info.onAdd = function (map) {
 };
 
 info.update = function (props) {
-  console.log(props);
   this._div.innerHTML = props
     ? `<h5>${props.name}</h5  >` + "Протяженность: " + props.length + " км"
     : "Маршрут не загружен";

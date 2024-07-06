@@ -96,7 +96,9 @@
               // make separate function for this
 
               drawnItems.addLayer(layer);
-              var name = `<div class="px-1"><p><b>${feature.properties.name}</b></p></div>`;
+              var name = `<div class="px-1"><p><b>${
+                feature.properties.name || ""
+              }</b></p></div>`;
               var desc = feature.properties.desc;
               if (desc) {
                 desc = `<div class="gfg p-1"><p>${desc}</p></div>`;
@@ -104,7 +106,6 @@
                 desc = "";
               }
 
-              if (!name) name = " ";
               layer.bindPopup(name + desc);
 
               layer.addEventListener("dblclick", function (e) {
@@ -180,7 +181,6 @@
               // ЗДЕСЬ МОЦ КОД
               // ЗДЕСЬ МОЦ КОД
               // ЗДЕСЬ МОЦ КОД
-              console.log(layer);
 
               if (layer.feature.geometry.type === "Point") {
                 markersFromFile.push(layer.getLatLng());
@@ -193,11 +193,8 @@
 
                 trackName = layer.feature.properties.name;
 
-                // let dispName =
-                //   trackName.length > 25 ? `${trackName.slice(0, 25)}...` : name;
-
                 info.update({
-                  name: "dispName",
+                  name: "",
                   length: getDistance(layer),
                 });
 
@@ -261,13 +258,6 @@
           map.flyTo([lonC, latC], zoom);
         };
       }
-
-      // info.addEventListener("dblclick", function (e) {
-      //   console.log("opening the modal to edit info");
-      //   $("#editinfo").modal();
-      //   document.getElementById("edit-popup-modal-input-name").value =
-      //     trackName;
-      // });
 
       $(document).ready(function () {
         $(".dropdown-menu").mouseleave(function () {
