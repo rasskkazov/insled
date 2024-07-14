@@ -6,6 +6,20 @@
     function sePath(dataUrl) {
         return `tracks/${dataUrl.split("/")[2].split(".gpx")}`
     }
+
+    function searchFiles() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const cards = document.getElementsByClassName('file-card');
+
+        for (let i = 0; i < cards.length; i++) {
+            const title = cards[i].querySelector('.card-title').textContent.toLowerCase();
+            if (title.includes(input)) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+    }
 </script>
 
 <style>
@@ -30,8 +44,15 @@
             <h2>База маршрутов</h2>
         </div>
     </div>
-    {% for file in files %}
+
     <div class="row p-2">
+        <div class="col text-center p-2">
+            <input type="text" id="searchInput" onkeyup="searchFiles()" placeholder="Поиск по названию" class="form-control">
+        </div>
+    </div>
+
+    {% for file in files %}
+    <div class="row p-2 file-card">
         <div class=" col shadow p-3 mb-2 bg-white rounded" style="width: 36rem;">
             <div class="card-body">
                 <h5 class="card-title">{{file.name}}</h5>
