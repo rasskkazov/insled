@@ -73,6 +73,7 @@
           out = JSON.parse(out);
 
           drawnItems.clearLayers();
+          markers.clear();
           L.geoJson(out, {
             style: function (feature) {
               return {
@@ -166,10 +167,6 @@
                   desc;
                 currentPopup = layer;
               });
-              // ЗДЕСЬ МОЦ КОД
-              // ЗДЕСЬ МОЦ КОД
-              // ЗДЕСЬ МОЦ КОД
-              // ЗДЕСЬ МОЦ КОД
 
               if (layer.feature.geometry.type === "Point") {
                 layer.options.autoId = autoRouteIdCounter++;
@@ -185,7 +182,7 @@
                 trackName = layer.feature.properties.name;
 
                 info.update({
-                  name: "",
+                  // name: trackName || "",
                   length: getDistance(layer),
                 });
 

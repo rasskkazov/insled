@@ -57,7 +57,9 @@
       onEachFeature: function (feature, layer) {
         // make separate function for this
         drawnItems.addLayer(layer);
-        var name = `<div class='p-1'><b>${feature.properties.name}</b></div>`;
+        var name = `<div class='p-1'><b>${
+          feature.properties.name || ""
+        }</b></div>`;
         var desc = feature.properties.desc;
         if (desc) {
           desc = `<div class="gfg p-1"<p>${desc}</p></div>`;
@@ -141,7 +143,7 @@
     }).addTo(map);
 
     info.update({
-      name: trackName,
+      // name: trackName,
       length: distance,
     });
 
@@ -160,7 +162,7 @@
     map.flyTo([lonC, latC], zoom);
   }
 </script>
-
+{% include 'uploadFileModal.html' %} {% include 'editWaypointModal.html' %}
 <div id="content-container" class="container-fluid p-0">
   <div id="map-container" class="container-fluid h-100 px-0">
     <div class="map" id="map" style="height: 100%"></div>
