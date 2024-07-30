@@ -88,7 +88,6 @@ map.addControl(
           color: "#00008b",
         },
       },
-      circlemarker: false,
       polygon: false,
       circle: false,
       rectangle: false,
@@ -126,6 +125,19 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
     markers.set(layer.options.autoId, layer.getLatLng());
     routingControl.setWaypoints([...markers.values()]);
+  } else if (event.layerType === "circlemarker") {
+    layer.addEventListener("dblclick", function (e) {
+      var name = "";
+      var desc = "";
+
+      $("#editpopup").modal();
+      document.getElementById("edit-popup-modal-input-name").value = name;
+      document.getElementById("edit-popup-modal-input-desc").value = desc;
+      currentPopup = layer;
+    });
+
+    layer.feature = layer.feature || { properties: {} };
+    layer.feature.properties.type = "noAutoRoute";
   }
 
   drawnItems.addLayer(layer);
@@ -168,7 +180,6 @@ function getCookie(name) {
 
 document.getElementById("export").onclick = function (e) {
   var data = drawnItems.toGeoJSON();
-
   var gpxData = GeoJsonToGpx(data);
 
   var serializer = new XMLSerializer();

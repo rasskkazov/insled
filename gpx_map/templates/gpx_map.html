@@ -168,11 +168,16 @@
                 currentPopup = layer;
               });
 
+              // МОЙ КООД
               if (layer.feature.geometry.type === "Point") {
-                layer.options.autoId = autoRouteIdCounter++;
-
-                markers.set(layer.options.autoId, layer.getLatLng());
-                routingControl.setWaypoints([...markers.values()]);
+                if (feature.properties.type !== "noAutoRoute") {
+                  layer.options.autoId = autoRouteIdCounter++;
+                  markers.set(layer.options.autoId, layer.getLatLng());
+                  routingControl.setWaypoints([...markers.values()]);
+                } else {
+                  layer.feature = layer.feature || { properties: {} };
+                  layer.feature.properties.type = "noAutoRoute";
+                }
               }
 
               if (layer.feature.geometry.type === "LineString") {
@@ -226,7 +231,6 @@
               }
             },
           }).addTo(map);
-
           // make separate function for this
           // drawnItems.featureGroup[0]
           var len =
@@ -270,7 +274,6 @@
       currentPopup.feature = currentPopup.feature || { properties: {} };
       currentPopup.feature.properties.name = name;
       currentPopup.feature.properties.desc = desc;
-
       currentPopup
         .bindPopup(`<p><b>${name}</b></p><div class='gfg'><p>${desc}</p></div>`)
         .openPopup();

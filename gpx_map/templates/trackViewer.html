@@ -93,9 +93,14 @@
         });
 
         if (layer.feature.geometry.type === "Point") {
-          layer.options.autoId = autoRouteIdCounter++;
-          markers.set(layer.options.autoId, layer.getLatLng());
-          routingControl.setWaypoints([...markers.values()]);
+          if (feature.properties.type !== "noAutoRoute") {
+            layer.options.autoId = autoRouteIdCounter++;
+            markers.set(layer.options.autoId, layer.getLatLng());
+            routingControl.setWaypoints([...markers.values()]);
+          } else {
+            layer.feature = layer.feature || { properties: {} };
+            layer.feature.properties.type = "noAutoRoute";
+          }
         }
 
         if (layer.feature.geometry.type === "LineString") {
