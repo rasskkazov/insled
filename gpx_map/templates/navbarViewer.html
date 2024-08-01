@@ -1,0 +1,70 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+  <a class="navbar-brand" href="#">Редактор gps-треков</a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#"
+          >Главная <span class="sr-only">(current)</span></a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"
+          >К приложению</a
+        >
+      </li>
+      <li class="nav-item dropdown">
+        <a
+          class="nav-link dropdown-toggle dropdownHandler"
+          href="#"
+          id="navbarDropdown"
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Файл
+        </a>
+        <div
+          id="file-dropdown"
+          class="dropdown-menu"
+          aria-labelledby="navbarDropdown"
+        >
+          <label
+            class="dropdown-item"
+            data-toggle="modal"
+            data-target="#uploadFileModal"
+          >
+            Загрузить файл в базу
+          </label>
+
+          <a
+            href="https://insled.ru/gpx_editor/files/"
+            class="dropdown-item"
+            style="margin-bottom: 8px"
+            >Загрузить маршруты из базы</a
+          >
+
+          <a
+            href="#"
+            class="dropdown-item"
+            id="export"
+            style="margin-bottom: 8px"
+            >Сохранить</a
+          >
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>

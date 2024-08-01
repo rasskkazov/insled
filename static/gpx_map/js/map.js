@@ -66,7 +66,7 @@ info.update = function (props) {
     : "Маршрут не загружен";
 };
 
-info.addTo(map);
+// info.addTo(map);
 
 L.control
   .zoom({

@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block page_content %} {% include 'navbar.html' %}
+{% extends "base.html" %} {% block page_content %}
 <!-- отрисовка маршрутов, загруженных из БД -->
 <style>
   .j-leaflet-draw-tooltip {
@@ -79,11 +79,42 @@
             .replace("</br>", "")
             .replace("</p>", "")
             .split("<p>");
-          var name = content[1];
-          var desc = content[2];
-
-          if (!name) name = "";
-          if (!desc) desc = "";
+          var name = content[1]
+            ? content[1]
+                .replace("<b>", "")
+                .replace("</b>", "")
+                .replace("<br>", "")
+                .replace("</br>", "")
+                .replace(/&/g, "")
+                .replace(/</g, "")
+                .replace(/>/g, "")
+                .replace(/"/g, "")
+                .replace(/'/g, "")
+                .replace("div", "")
+                .replace("/pdiv", "")
+                .replace("/p/div", "")
+                .replace("/p/", "")
+                .replace("class=px-1", "")
+                .replace("class=gfg p-1", "")
+            : "";
+          var desc = content[2]
+            ? content[2]
+                .replace("<b>", "")
+                .replace("</b>", "")
+                .replace("<br>", "")
+                .replace("</br>", "")
+                .replace(/&/g, "")
+                .replace(/</g, "")
+                .replace(/>/g, "")
+                .replace(/"/g, "")
+                .replace(/'/g, "")
+                .replace("div", "")
+                .replace("/pdiv", "")
+                .replace("/p/div", "")
+                .replace("/p/", "")
+                .replace("class=px-1", "")
+                .replace("class=gfg p-1", "")
+            : "";
 
           console.log(popup);
           $("#editpopup").modal();
@@ -166,15 +197,209 @@
     var lonC = (lon1 + lon2) / 2;
     map.flyTo([lonC, latC], zoom);
   }
+
+  function handleFileSelect() {
+    if (
+      !window.File ||
+      !window.FileReader ||
+      !window.FileList ||
+      !window.Blob
+    ) {
+      alert("The File APIs are not fully supported in this browser.");
+      return;
+    }
+
+    var input = document.getElementById("fileinput");
+    if (!input) {
+      alert("Couldn't find the fileinput element.");
+    } else if (!input.files) {
+      alert(
+        "This browser doesn't seem to support the `files` property of file inputs."
+      );
+    } else if (!input.files[0]) {
+      alert("Please select a file before clicking 'Load'");
+    } else {
+      var file = input.files[0];
+      var fr = new FileReader();
+      fr.readAsText(file);
+      fr.onload = function (e) {
+        var input = fr.result;
+        var out = JSON.stringify(
+          toGeoJSON["gpx"](new DOMParser().parseFromString(input, "text/xml")),
+          null,
+          4
+        );
+
+        out = JSON.parse(out);
+
+        drawnItems.clearLayers();
+        markers.clear();
+        L.geoJson(out, {
+          style: function (feature) {
+            return {
+              color: "#d12a00",
+              weight: 5,
+              opacity: 0.6,
+            };
+          },
+          onEachFeature: function (feature, layer) {
+            // make separate function for this
+
+            drawnItems.addLayer(layer);
+            var name = `<div class="px-1"><p><b>${
+              feature.properties.name || ""
+            }</b></p></div>`;
+            var desc = feature.properties.desc;
+            if (desc) {
+              desc = `<div class="gfg p-1"><p>${desc}</p></div>`;
+            } else {
+              desc = "";
+            }
+
+            layer.bindPopup(name + desc);
+
+            layer.addEventListener("dblclick", function (e) {
+              var popup = layer.getPopup();
+              var content = popup._content.split("<p>");
+
+              var name = content[1]
+                ? content[1]
+                    .replace("<b>", "")
+                    .replace("</b>", "")
+                    .replace("<br>", "")
+                    .replace("</br>", "")
+                    .replace(/&/g, "")
+                    .replace(/</g, "")
+                    .replace(/>/g, "")
+                    .replace(/"/g, "")
+                    .replace(/'/g, "")
+                    .replace("div", "")
+                    .replace("/pdiv", "")
+                    .replace("/p/div", "")
+                    .replace("/p/", "")
+                    .replace("class=px-1", "")
+                    .replace("class=gfg p-1", "")
+                : "";
+              var desc = content[2]
+                ? content[2]
+                    .replace("<b>", "")
+                    .replace("</b>", "")
+                    .replace("<br>", "")
+                    .replace("</br>", "")
+                    .replace(/&/g, "")
+                    .replace(/</g, "")
+                    .replace(/>/g, "")
+                    .replace(/"/g, "")
+                    .replace(/'/g, "")
+                    .replace("div", "")
+                    .replace("/pdiv", "")
+                    .replace("/p/div", "")
+                    .replace("/p/", "")
+                    .replace("class=px-1", "")
+                    .replace("class=gfg p-1", "")
+                : "";
+
+              $("#editpopup").modal();
+              document.getElementById("edit-popup-modal-input-name").value =
+                name;
+              document.getElementById("edit-popup-modal-input-desc").value =
+                desc;
+              currentPopup = layer;
+            });
+
+            if (layer.feature.geometry.type === "Point") {
+              if (feature.properties.type !== "noAutoRoute") {
+                layer.options.autoId = autoRouteIdCounter++;
+                markers.set(layer.options.autoId, layer.getLatLng());
+                routingControl.setWaypoints([...markers.values()]);
+              } else {
+                layer.feature = layer.feature || { properties: {} };
+                layer.feature.properties.type = "noAutoRoute";
+              }
+            }
+
+            if (layer.feature.geometry.type === "LineString") {
+              let lat = 0;
+              let lng = 0;
+
+              trackName = layer.feature.properties.name;
+
+              info.update({
+                // name: trackName || "",
+                length: getDistance(layer),
+              });
+
+              let cm = L.circleMarker([0, 0], {
+                color: "#3388ff",
+                fillOpacity: 0,
+                radius: 0,
+              });
+
+              let popup = L.tooltip();
+
+              let customOptions = {
+                direction: "right",
+                maxWidth: "400",
+                width: "200",
+                sticky: true,
+                className:
+                  "leaflet-draw-tooltip leaflet-draw-tooltip-single j-leaflet-draw-tooltip",
+              };
+              cm.bindTooltip(popup, customOptions);
+
+              layer.on("mouseover", function (e) {
+                lat = e.latlng.lat;
+                lng = e.latlng.lng;
+
+                var trackLength = getDistanceToPoint(layer, {
+                  lat: lat,
+                  lng: lng,
+                });
+
+                cm.setLatLng([lat, lng]);
+
+                popup.setContent(
+                  `<p>Расстояние от начала маршрута: ${trackLength} км</p>`
+                );
+                popup.setLatLng([lat, lng]);
+
+                cm.addTo(map);
+                popup.openPopup();
+              });
+            }
+          },
+        }).addTo(map);
+        // make separate function for this
+        // drawnItems.featureGroup[0]
+        var len = drawnItems.getLayers()[0].feature.geometry.coordinates.length;
+
+        var lat1 = drawnItems.getLayers()[0].feature.geometry.coordinates[0][0];
+        var lon1 = drawnItems.getLayers()[0].feature.geometry.coordinates[0][1];
+        var lat2 =
+          drawnItems.getLayers()[0].feature.geometry.coordinates[len - 1][0];
+        var lon2 =
+          drawnItems.getLayers()[0].feature.geometry.coordinates[len - 1][1];
+        var zoom = 12;
+        var latC = (lat1 + lat2) / 2;
+        var lonC = (lon1 + lon2) / 2;
+        map.flyTo([lonC, latC], zoom);
+      };
+    }
+
+    $(document).ready(function () {
+      $(".dropdown-menu").mouseleave(function () {
+        $(".dropdownHandler").dropdown("toggle");
+      });
+    });
+  }
 </script>
-{% include 'uploadFileModal.html' %} {% include 'editWaypointModal.html' %}
+{% include 'navbarViewer.html' %} {% include 'uploadFileModal.html' %}
 <div id="content-container" class="container-fluid p-0">
   <div id="map-container" class="container-fluid h-100 px-0">
     <div class="map" id="map" style="height: 100%"></div>
   </div>
 </div>
-
-{% load static %}
+{%include 'editWaypointModal.html' %} {% load static %}
 <script
   type="text/JavaScript"
   src="{% static 'gpx_map/js/map.js' %}?version=1"
