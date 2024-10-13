@@ -248,3 +248,7 @@
   background-repeat: no-repeat;
   color: transparent !important;
 }
+
+.leaflet-routing-container {
+  display: none;
+}
